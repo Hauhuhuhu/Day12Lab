@@ -56,26 +56,39 @@ namespace Day12Lab_TH1.Controllers
         [Route("Add")]
         public IActionResult Create(Student s, IFormFile? AvatarFile)
         {
-            s.Id = listStudents.Last<Student>().Id + 1;
-            if (AvatarFile != null && AvatarFile.Length > 0)
+            if (ModelState.IsValid)
             {
-                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
-                if (!Directory.Exists(uploadsFolder))
-                    Directory.CreateDirectory(uploadsFolder);
-
-                string uniqueFileName = $"{Guid.NewGuid()}_{AvatarFile.FileName}";
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                s.Id = listStudents.Last<Student>().Id + 1;
+                if (AvatarFile != null && AvatarFile.Length > 0)
                 {
-                    AvatarFile.CopyTo(stream);
-                }
+                    string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
+                    if (!Directory.Exists(uploadsFolder))
+                        Directory.CreateDirectory(uploadsFolder);
 
-                // Lưu tên file vào model
-                s.Avatar = uniqueFileName;
+                    string uniqueFileName = $"{Guid.NewGuid()}_{AvatarFile.FileName}";
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        AvatarFile.CopyTo(stream);
+                    }
+
+                    // Lưu tên file vào model
+                    s.Avatar = uniqueFileName;
+                }
+                listStudents.Add(s);
+                return View("Index", listStudents);
             }
-            listStudents.Add(s);
-            return View("Index", listStudents);
+            ViewBag.AllGenders = Enum.GetValues(typeof(Gender)).Cast<Gender>().ToList();
+            ViewBag.AllBranches = new List<SelectListItem>()
+            {
+                new SelectListItem { Text = "IT", Value = "1" },
+                new SelectListItem { Text = "BE", Value = "2" },
+                new SelectListItem { Text = "CE", Value = "3" }, 
+                new SelectListItem { Text = "EE", Value = "4" }
+            };
+
+            return View(s);
         }
 
     }
