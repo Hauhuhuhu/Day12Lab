@@ -2,6 +2,7 @@
 using Day13Lab_bt2.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace Day13Lab_bt2.Controllers
 {
@@ -14,11 +15,36 @@ namespace Day13Lab_bt2.Controllers
             db = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? mid)
         {
-            var learners = db.Learners.Include(m => m.Major).ToList();
+            if (mid == null)
+            {
+                var learners = db.Learners
+                    .Include(m => m.Major)
+                    .ToList();
 
-            return View(learners);
+                return View(learners);
+            }
+            else
+            {
+                var learners = db.Learners
+                    .Where(l => l.MajorID == mid)
+                    .Include(m => m.Major)
+                    .ToList();
+
+                return View(learners);
+            }
         }
+
+        public IActionResult LearnerByMajorID(int mid)
+        {
+            var learners = db.Learners
+                .Where(l => l.MajorID == mid)
+                .Include(m => m.Major)
+                .ToList();
+
+            return PartialView("LearnerTable", learners);
+        }
+
     }
 }
