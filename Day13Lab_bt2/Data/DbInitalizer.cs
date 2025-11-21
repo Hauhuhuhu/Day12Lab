@@ -46,6 +46,13 @@ namespace Day13Lab_bt2.Data
                 LastName = "Alonso",
                 EnrollmentDate = DateTime.Parse("2002-09-01"),
                 MajorID = 2
+            },
+            new Learner
+            {
+                FirstMidName = "Kpm",
+                LastName = "Alonso",
+                EnrollmentDate = DateTime.Parse("2002-09-01"),
+                MajorID = 2
             }
         };
 
